@@ -1,6 +1,6 @@
 # crm-demo-customer-portal-service
 
-TODO: what this service does.
+Backend for the Customer Portal: external users from the Keycloak `portal` realm manage their profile, upload documents (pre-signed S3 URLs, virus-scanned with ClamAV) and make submissions, which reach the CRM as Kafka events through a transactional outbox. See `docs/`.
 
 | | |
 |---|---|
@@ -33,7 +33,20 @@ Needed everywhere except the `local` profile.
 | `DB_URL` | JDBC URL of the database |
 | `DB_USERNAME` | Database user |
 | `DB_PASSWORD` | Database password |
-| `JWT_ISSUER_URI` | Issuer whose JWTs this service accepts |
+| `JWT_ISSUER_URI` | The `portal` realm issuer, for example `http://localhost:8180/realms/portal`; tokens from any other realm get 401 |
+| `PORTAL_CORS_ALLOWED_ORIGINS` | Comma-separated browser origins allowed to call the API, for example `http://localhost:5174` (the Portal UI) |
+| `KAFKA_BOOTSTRAP_SERVERS` | Kafka brokers, for example `localhost:9092` |
+| `PORTAL_STORAGE_BUCKET` | Private bucket for uploaded documents |
+| `PORTAL_STORAGE_REGION` | Its region, for example `eu-central-1` |
+| `PORTAL_STORAGE_ENDPOINT` | Optional; the S3/SQS endpoint for LocalStack, for example `http://localhost:4566`. Empty for AWS |
+| `PORTAL_STORAGE_ACCESS_KEY`, `PORTAL_STORAGE_SECRET_KEY` | Optional static credentials (LocalStack); empty to use the AWS default credentials chain |
+| `PORTAL_STORAGE_UPLOAD_QUEUE_URL` | SQS queue that receives the bucket's object-created notifications |
+| `PORTAL_CLAMAV_HOST`, `PORTAL_CLAMAV_PORT` | ClamAV `clamd` (port default `3310`) |
+| `PORTAL_UPLOADS_MAX_FILE_SIZE` | Optional; largest file (default `10MB`) |
+| `PORTAL_UPLOADS_URL_TTL` | Optional; how long an upload URL works, at most `10m` (default `10m`) |
+| `PORTAL_UPLOADS_QUOTA_STARTER`, `PORTAL_UPLOADS_QUOTA_STANDARD` | Optional; storage per user (defaults `20MB`, `200MB`) |
+| `portal.uploads.allowed-content-types`, `portal.uploads.scan-grace`, `portal.uploads.poll-interval` | Optional settings with defaults (`application/pdf,image/png,image/jpeg`; `1h`; `1s`), see `docs/submissions.md` |
+| `PORTAL_OUTBOX_RELAY_INTERVAL` | Optional; how often the outbox relay publishes waiting events (default `1s`) |
 
 ## Test and format
 

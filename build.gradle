@@ -29,6 +29,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'
+    // The AWS SDK isn't in Spring Boot's BOM; S3 for documents, SQS for upload notifications
+    implementation platform('software.amazon.awssdk:bom:2.44.9')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:sqs'
     // springdoc isn't in Spring Boot's BOM
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -46,6 +51,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
     testImplementation 'org.testcontainers:testcontainers-postgresql'
+    testImplementation 'org.testcontainers:testcontainers-kafka'
+    testImplementation 'org.testcontainers:testcontainers-localstack'
+    testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
+    testImplementation 'org.awaitility:awaitility'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

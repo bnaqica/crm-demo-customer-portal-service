@@ -10,7 +10,21 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9999/local-issuer   # required at startup, but unused with authentication off
+          issuer-uri: http://localhost:8180/realms/portal   # unused while the local profile turns authentication off
+  kafka:
+    bootstrap-servers: localhost:9092
+portal:
+  storage:   # local-docker LocalStack
+    bucket: portal-documents
+    region: eu-central-1
+    endpoint: http://localhost:4566
+    access-key: test
+    secret-key: test
+    upload-queue-url: http://localhost:4566/000000000000/portal-uploads
+  clamav:
+    host: localhost   # local-docker ClamAV
+  cors:
+    allowed-origins: http://localhost:5174   # the Portal UI (local-docker)
 springdoc:
   api-docs:
     enabled: true

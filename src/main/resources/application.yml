@@ -26,7 +26,44 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI}
+          issuer-uri: ${JWT_ISSUER_URI}   # the portal realm; tokens from other realms get 401
+  task:
+    scheduling:
+      pool:
+        size: 2   # the outbox relay and the upload-queue poller each get a thread, so a slow scan can't hold up events
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: crm-demo-customer-portal-service
+      auto-offset-reset: earliest
+    producer:
+      acks: all
+
+portal:
+  cors:
+    allowed-origins: ${PORTAL_CORS_ALLOWED_ORIGINS}   # comma-separated, for example the Portal UI
+  storage:
+    bucket: ${PORTAL_STORAGE_BUCKET}                     # private; documents are only reachable by pre-signed URL
+    region: ${PORTAL_STORAGE_REGION}
+    endpoint: ${PORTAL_STORAGE_ENDPOINT:}                # LocalStack; leave empty for AWS
+    access-key: ${PORTAL_STORAGE_ACCESS_KEY:}            # empty to use the AWS default credentials chain
+    secret-key: ${PORTAL_STORAGE_SECRET_KEY:}
+    upload-queue-url: ${PORTAL_STORAGE_UPLOAD_QUEUE_URL} # SQS queue receiving the bucket's object-created notifications
+  clamav:
+    host: ${PORTAL_CLAMAV_HOST}                          # clamd, TCP
+    port: ${PORTAL_CLAMAV_PORT:3310}
+  uploads:
+    max-file-size: ${PORTAL_UPLOADS_MAX_FILE_SIZE:10MB}
+    url-ttl: ${PORTAL_UPLOADS_URL_TTL:10m}               # at most 10m
+    quota:
+      starter: ${PORTAL_UPLOADS_QUOTA_STARTER:20MB}
+      standard: ${PORTAL_UPLOADS_QUOTA_STANDARD:200MB}
+  outbox:
+    relay-interval: ${PORTAL_OUTBOX_RELAY_INTERVAL:1s}
+  topics:
+    portal-intake: portal-intake   # submissions and profile changes for the CRM (core-service)
+    audit-events: audit-events
+    submission-status: submission-status   # from core-service; DLQ submission-status-dlq
 
 management:
   endpoints:
