@@ -31,7 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
     // The AWS SDK isn't in Spring Boot's BOM; S3 for documents, SQS for upload notifications
-    implementation platform('software.amazon.awssdk:bom:2.44.9')
+    implementation platform('software.amazon.awssdk:bom:2.59.7')
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:sqs'
     // springdoc isn't in Spring Boot's BOM
